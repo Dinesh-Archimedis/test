@@ -1,0 +1,50 @@
+stages:
+    - build
+    - test
+    - deploy
+
+variables:
+    build_file_name: chicken65.txt
+
+prep.dish:
+    image: alpine
+    stage: build
+    script: 
+        - echo "Preparing Chicken 65"
+        - mkdir build
+        - echo "Prepare Masala for 10 people" >> build/$build_file_name
+        - echo "Prepare chicken pieces for 10 people" >> build/$build_file_name
+        - echo "Mix masala to chicken" >> build/$build_file_name
+    artifacts:
+        paths:
+            - build
+
+quality check:
+    image: alpine
+    stage: test
+    script:
+        - test -f build/$build_file_name
+        - grep "Prepare Masala for 10 people" build/$build_file_name
+        - grep "Prepare chicken pieces for 10 people" build/$build_file_name
+        - grep "Mix masala to chicken" build/$build_file_name
+
+
+cook.food:
+    image: alpine
+    stage: deploy
+    script:
+        - echo "Cook food" >> build/$build_file_name
+    artifacts:
+        paths:
+            - build
+
+serve.food:
+    image: alpine
+    stage: deploy
+    script:
+        - echo "Serve food to customer" >> build/$build_file_name
+    artifacts:
+        paths:
+            - build
+    when: manual
+
